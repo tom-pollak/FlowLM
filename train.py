@@ -49,16 +49,6 @@ def hf_trainer_accuracy(eval_preds):
     return {"global_acc": global_acc, "bucket_acc": bucket_acc}
 
 
-def load_config(config_path: str) -> FlowLMConfig:
-    """Load and merge configuration from YAML file with structured config."""
-    if not os.path.exists(config_path):
-        raise FileNotFoundError(f"Config file not found: {config_path}")
-
-    return OmegaConf.merge(  # type: ignore
-        OmegaConf.structured(FlowLMConfig), OmegaConf.load(config_path)
-    )
-
-
 def prepare_dataset(config: FlowLMConfig, tokenizer) -> DatasetDict:
     """Load and prepare training/validation datasets."""
     print(f"Loading dataset: {config.dataset.name}")
@@ -86,6 +76,8 @@ def prepare_dataset(config: FlowLMConfig, tokenizer) -> DatasetDict:
         mask_fn,
         remove_columns=raw_ds.column_names,
         num_proc=config.dataset.num_proc,
+        batched=True,
+        cache_file_name=f"cache-{config.dataset.name}-{config.dataset.split}-{config.dataset.max_length}-{config.masking.strategy.value}-{config.masking.ratio.min_ratio}-{config.masking.ratio.max_ratio}.arrow",
     ).with_format(type="torch")
 
     # Train/validation split
@@ -106,16 +98,20 @@ def main():
 
     args = parser.parse_args()
 
-    # Load configuration
-    if args.config:
-        config = load_config(args.config)
-        print(f"Loaded config from: {args.config}")
-    else:
+    if not args.config:
         parser.error("Must specify --config")
+    elif not os.path.exists(args.config):
+        parser.error(f"Config file not found: {args.config}")
 
-    # Setup device
-    device = "cuda" if torch.cuda.is_available() else "cpu"
-    print(f"Using device: {device}")
+    # Load config
+    config: FlowLMConfig = OmegaConf.merge(  # type: ignore
+        OmegaConf.structured(FlowLMConfig), OmegaConf.load(args.config)
+    )
+
+    output_dir = config.logging.save_dir
+    if os.path.exists(output_dir):
+        raise FileExistsError(f"Output directory already exists: {output_dir}")
+    os.makedirs(output_dir)
 
     # Initialize wandb
     wandb.init(
@@ -123,6 +119,10 @@ def main():
         name=config.logging.wandb.name,
         config=OmegaConf.to_container(config, resolve=True),  # type: ignore
     )
+
+    # Setup device
+    device = "cuda" if torch.cuda.is_available() else "cpu"
+    print(f"Using device: {device}")
 
     # Load model and tokenizer
     print(f"Loading model: {config.model.model_id}")
@@ -142,12 +142,6 @@ def main():
     dd = prepare_dataset(config, tokenizer)
 
     # Setup training arguments
-    output_dir = config.logging.save_dir
-    if os.path.exists(output_dir):
-        raise FileExistsError(f"Output directory already exists: {output_dir}")
-
-    os.makedirs(output_dir)
-
     training_args = TrainingArguments(
         output_dir=output_dir,
         num_train_epochs=config.training.num_epochs,
