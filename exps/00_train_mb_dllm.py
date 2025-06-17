@@ -4,16 +4,12 @@ Baseline ModernBERT diffusion LLM training experiment.
 Replicates the mb_dllm notebook training with variable masking ratios.
 """
 
-import os
 import random
 import torch
 from torch.utils.data import DataLoader
 from torch.optim import AdamW
-from transformers import (
-    AutoTokenizer,
-    AutoModelForMaskedLM,
-    get_cosine_schedule_with_warmup,
-)
+from transformers import AutoTokenizer, AutoModelForMaskedLM
+from transformers.optimization import get_cosine_schedule_with_warmup
 from datasets import load_dataset
 from tqdm.auto import tqdm
 import matplotlib.pyplot as plt
@@ -200,18 +196,3 @@ result_llada = iterative_decode(
     mask_only=True,  # LLaDA mode
 )
 print(f"LLaDA result: {result_llada}")
-
-print("\nTesting FlowLM-style inference (mask_only=False):")
-result_flowlm = iterative_decode(
-    model,
-    tokenizer,
-    test_prompt,
-    answer_length=16,
-    device=device,
-    mask_only=False,  # FlowLM mode
-    confidence_threshold=0.7,
-    max_replacements=2,
-)
-print(f"FlowLM result: {result_flowlm}")
-
-# %%
