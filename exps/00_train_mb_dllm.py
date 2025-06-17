@@ -71,7 +71,7 @@ def mask_fn(example):
 
 
 # Process dataset
-proc_ds = raw_ds.map(mask_fn, remove_columns=raw_ds.column_names, num_proc=4)
+proc_ds = raw_ds.map(mask_fn, remove_columns=raw_ds.column_names, num_proc=24)
 proc_ds.set_format(type="torch")
 
 # %%
