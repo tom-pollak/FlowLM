@@ -10,7 +10,11 @@ from .data import (
     PURE_RANDOM,
 )
 from .inference import iterative_decode
-from .evaluation import accuracy_buckets, evaluate_model
+from .evaluation import (
+    accuracy_buckets,
+    evaluate_model,
+    test_inference,
+)
 from .config import (
     FlowLMConfig,
     get_llada_config,
@@ -30,6 +34,7 @@ __all__ = [
     "iterative_decode",
     "accuracy_buckets",
     "evaluate_model",
+    "test_inference",
     "FlowLMConfig",
     "get_llada_config",
     "get_flowlm_config",

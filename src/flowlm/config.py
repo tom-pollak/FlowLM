@@ -80,7 +80,6 @@ class WandbConfig:
     """Weights & Biases configuration."""
     project: str = "flowlm"
     name: Optional[str] = None
-    tags: List[str] = field(default_factory=list)
     log_model: bool = True
 
 
@@ -111,7 +110,6 @@ def get_llada_config() -> FlowLMConfig:
     config = FlowLMConfig()
     config.masking.strategy = "LLADA_STRATEGY"
     config.logging.wandb.name = "llada-baseline"
-    config.logging.wandb.tags = ["llada", "baseline", "modernbert"]
     config.logging.save_dir = "checkpoints/llada"
     return config
 
@@ -121,6 +119,5 @@ def get_flowlm_config() -> FlowLMConfig:
     config = FlowLMConfig()
     config.masking.strategy = "FLOWLM_STRATEGY"
     config.logging.wandb.name = "flowlm-experiment"
-    config.logging.wandb.tags = ["flowlm", "experimental", "any-position-diffusion"]
     config.logging.save_dir = "checkpoints/flowlm"
     return config

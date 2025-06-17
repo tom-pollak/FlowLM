@@ -1,6 +1,6 @@
 import torch
-from typing import List
-from transformers import PreTrainedTokenizer, PreTrainedModel
+from transformers.tokenization_utils import PreTrainedTokenizer
+from transformers.modeling_utils import PreTrainedModel
 
 
 def iterative_decode(
@@ -8,7 +8,6 @@ def iterative_decode(
     tokenizer: PreTrainedTokenizer,
     prompt: str,
     answer_length: int = 32,
-    device: str = "cuda",
     mask_only: bool = True,
     confidence_threshold: float = 0.5,
     max_replacements: int = 1,
@@ -41,6 +40,8 @@ def iterative_decode(
     num_steps = (
         answer_length if mask_only else answer_length // 2
     )  # FlowLM needs fewer steps
+
+    device = next(model.parameters()).device
 
     for step in range(num_steps):
         with torch.no_grad():
