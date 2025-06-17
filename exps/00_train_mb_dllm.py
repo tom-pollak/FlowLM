@@ -15,7 +15,6 @@ from tqdm.auto import tqdm
 import matplotlib.pyplot as plt
 
 from flowlm import apply_random_mask, evaluate_model, iterative_decode, BERT_STRATEGY
-
 # %%
 # Configuration
 model_id = "answerdotai/ModernBERT-large"
