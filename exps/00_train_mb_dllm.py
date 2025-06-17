@@ -87,8 +87,16 @@ train_size = int(0.95 * len(proc_ds))
 train_ds = proc_ds.shuffle(seed=42).select(range(train_size))
 val_ds = proc_ds.select(range(train_size, len(proc_ds)))
 
-train_loader = DataLoader(train_ds, batch_size=batch_size, shuffle=True)
-val_loader = DataLoader(val_ds, batch_size=batch_size, shuffle=False)
+dl_kwargs = dict(
+    batch_size=batch_size,
+    num_workers=16,
+    pin_memory=True,
+    persistent_workers=True,
+    prefetch_factor=4,
+)
+
+train_loader = DataLoader(train_ds, shuffle=True, **dl_kwargs)
+val_loader = DataLoader(val_ds, shuffle=False, **dl_kwargs)
 
 print(f"Training samples: {len(train_ds)}")
 print(f"Validation samples: {len(val_ds)}")
@@ -105,6 +113,8 @@ print(f"Total steps: {total_steps}, Warmup steps: {warmup_steps}")
 # %%
 # Training loop
 model.train()
+torch.compile(model, mode="max-autotune")
+
 global_step = 0
 losses, val_losses = [], []
 accs, val_accs = [], []
