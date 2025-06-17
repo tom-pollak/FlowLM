@@ -77,7 +77,6 @@ def prepare_dataset(config: FlowLMConfig, tokenizer) -> DatasetDict:
         remove_columns=raw_ds.column_names,
         num_proc=config.dataset.num_proc,
         batched=True,
-        cache_file_name=f"cache-{config.dataset.name}-{config.dataset.split}-{config.dataset.max_length}-{config.masking.strategy.value}-{config.masking.ratio.min_ratio}-{config.masking.ratio.max_ratio}.arrow",
     ).with_format(type="torch")
 
     # Train/validation split
