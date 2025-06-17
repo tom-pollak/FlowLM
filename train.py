@@ -89,7 +89,7 @@ def prepare_dataset(config: FlowLMConfig, tokenizer) -> DatasetDict:
     ).with_format(type="torch")
 
     # Train/validation split
-    dd = proc_ds.train_test_split(test_size=config.dataset.train_split)
+    dd = proc_ds.train_test_split(train_size=config.dataset.train_split)
 
     print(f"Training samples: {len(dd['train'])}")
     print(f"Validation samples: {len(dd['test'])}")

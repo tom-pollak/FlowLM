@@ -110,7 +110,7 @@ class LoggingConfig:
 
     wandb: WandbConfig = field(default_factory=WandbConfig)
     hf: HuggingFaceConfig = field(default_factory=HuggingFaceConfig)
-    log_every: int = 200
+    log_every: int = 25
     save_dir: str = "checkpoints"
 
 
