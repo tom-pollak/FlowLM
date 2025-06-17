@@ -211,3 +211,7 @@ result_flowlm = iterative_decode(
 print(f"FlowLM result: {result_flowlm}")
 
 # %%
+
+repo_id = "tommyp111/modernbert-diffusion"
+model.push_to_hub(repo_id, commit_message="Add diffusion-style fine-tuned weights")
+tokenizer.push_to_hub(repo_id)
