@@ -14,7 +14,14 @@ from datasets import load_dataset
 from tqdm.auto import tqdm
 import matplotlib.pyplot as plt
 
-from flowlm import apply_random_mask, evaluate_model, iterative_decode, BERT_STRATEGY
+from flowlm import (
+    apply_random_mask,
+    evaluate_model,
+    iterative_decode,
+    BERT_STRATEGY,
+    MaskingRatio,
+)
+
 # %%
 # Configuration
 model_id = "answerdotai/ModernBERT-large"
@@ -58,6 +65,7 @@ def mask_fn(example):
         example,
         tokenizer,
         strategy=BERT_STRATEGY,  # 80% mask, 10% random, 10% unchanged
+        ratio=MaskingRatio(min_ratio=mask_ratio_min, max_ratio=mask_ratio_max),
         max_len=max_len,
     )
 
