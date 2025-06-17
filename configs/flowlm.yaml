@@ -1,0 +1,11 @@
+# FlowLM Experimental Configuration
+# Only includes values that differ from structured config defaults
+
+masking:
+  strategy: "FLOWLM_STRATEGY"
+
+logging:
+  wandb:
+    name: "flowlm-experiment"
+    tags: ["flowlm", "experimental", "any-position-diffusion"]
+  save_dir: "checkpoints/flowlm"

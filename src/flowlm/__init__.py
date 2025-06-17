@@ -11,6 +11,11 @@ from .data import (
 )
 from .inference import iterative_decode
 from .evaluation import accuracy_buckets, evaluate_model
+from .config import (
+    FlowLMConfig,
+    get_llada_config,
+    get_flowlm_config,
+)
 
 __all__ = [
     "format_dialogue",
@@ -25,4 +30,7 @@ __all__ = [
     "iterative_decode",
     "accuracy_buckets",
     "evaluate_model",
+    "FlowLMConfig",
+    "get_llada_config",
+    "get_flowlm_config",
 ]
