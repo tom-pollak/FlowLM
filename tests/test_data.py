@@ -5,10 +5,7 @@ from transformers import AutoTokenizer
 from flowlm import (
     apply_random_mask,
     format_dialogue,
-    BERT_STRATEGY,
-    FLOWLM_STRATEGY,
-    PURE_MASK,
-    PURE_RANDOM,
+    MaskEnum,
     MaskingRatio,
 )
 
@@ -48,7 +45,11 @@ class TestApplyRandomMask:
     def test_basic_masking(self, tokenizer, test_example):
         """Test basic masking functionality."""
         result = apply_random_mask(
-            test_example, tokenizer, BERT_STRATEGY, MaskingRatio(0.5, 0.5), max_len=64
+            test_example,
+            tokenizer,
+            MaskEnum.BERT.value,
+            MaskingRatio(0.5, 0.5),
+            max_len=64,
         )
 
         # Check output structure
@@ -63,7 +64,11 @@ class TestApplyRandomMask:
     def test_pure_mask_strategy(self, tokenizer, test_example):
         """Test pure masking strategy."""
         result = apply_random_mask(
-            test_example, tokenizer, PURE_MASK, MaskingRatio(0.5, 0.5), max_len=64
+            test_example,
+            tokenizer,
+            MaskEnum.PURE_MASK.value,
+            MaskingRatio(0.5, 0.5),
+            max_len=64,
         )
 
         # All labeled positions should be [MASK] tokens
@@ -77,7 +82,11 @@ class TestApplyRandomMask:
     def test_pure_random_strategy(self, tokenizer, test_example):
         """Test pure random token strategy."""
         result = apply_random_mask(
-            test_example, tokenizer, PURE_RANDOM, MaskingRatio(0.5, 0.5), max_len=64
+            test_example,
+            tokenizer,
+            MaskEnum.PURE_RANDOM.value,
+            MaskingRatio(0.5, 0.5),
+            max_len=64,
         )
 
         # All labeled positions should be random tokens (not masks)
@@ -104,7 +113,7 @@ class TestApplyRandomMask:
             bert_result = apply_random_mask(
                 test_example,
                 tokenizer,
-                BERT_STRATEGY,
+                MaskEnum.BERT.value,
                 MaskingRatio(0.5, 0.5),
                 max_len=64,
             )
@@ -113,7 +122,7 @@ class TestApplyRandomMask:
             flowlm_result = apply_random_mask(
                 test_example,
                 tokenizer,
-                FLOWLM_STRATEGY,
+                MaskEnum.FLOWLM.value,
                 MaskingRatio(0.5, 0.5),
                 max_len=64,
             )
@@ -129,11 +138,19 @@ class TestApplyRandomMask:
     def test_masking_ratio_effect(self, tokenizer, test_example):
         """Test that masking ratio affects number of masked tokens."""
         low_ratio_result = apply_random_mask(
-            test_example, tokenizer, BERT_STRATEGY, MaskingRatio(0.2, 0.2), max_len=64
+            test_example,
+            tokenizer,
+            MaskEnum.BERT.value,
+            MaskingRatio(0.2, 0.2),
+            max_len=64,
         )
 
         high_ratio_result = apply_random_mask(
-            test_example, tokenizer, BERT_STRATEGY, MaskingRatio(0.8, 0.8), max_len=64
+            test_example,
+            tokenizer,
+            MaskEnum.BERT.value,
+            MaskingRatio(0.8, 0.8),
+            max_len=64,
         )
 
         low_labeled = sum(1 for x in low_ratio_result["labels"] if x != -100)
@@ -145,7 +162,11 @@ class TestApplyRandomMask:
     def test_only_assistant_tokens_labeled(self, tokenizer, test_example):
         """Test that only assistant response tokens get labeled."""
         result = apply_random_mask(
-            test_example, tokenizer, BERT_STRATEGY, MaskingRatio(0.5, 0.5), max_len=64
+            test_example,
+            tokenizer,
+            MaskEnum.BERT.value,
+            MaskingRatio(0.5, 0.5),
+            max_len=64,
         )
 
         # Find the first [SEP] token position

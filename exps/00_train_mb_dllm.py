@@ -18,7 +18,7 @@ from flowlm import (
     apply_random_mask,
     evaluate_model,
     iterative_decode,
-    BERT_STRATEGY,
+    MaskEnum,
     MaskingRatio,
 )
 
@@ -64,7 +64,7 @@ def mask_fn(example):
     return apply_random_mask(
         example,
         tokenizer,
-        strategy=BERT_STRATEGY,  # 80% mask, 10% random, 10% unchanged
+        strategy=MaskEnum.BERT.value,  # 80% mask, 10% random, 10% unchanged
         ratio=MaskingRatio(min_ratio=mask_ratio_min, max_ratio=mask_ratio_max),
         max_len=max_len,
     )

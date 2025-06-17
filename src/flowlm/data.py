@@ -1,5 +1,6 @@
 import random
 from dataclasses import dataclass
+from enum import Enum
 from typing import Dict, List, Any
 from transformers.tokenization_utils import PreTrainedTokenizer
 
@@ -27,12 +28,12 @@ class MaskingRatio:
             raise ValueError(f"Invalid ratio range: {self.min_ratio}-{self.max_ratio}")
 
 
-# Common strategies
-BERT_STRATEGY = MaskingStrategy(mask_prob=0.8, random_prob=0.1, unchanged_prob=0.1)
-LLADA_STRATEGY = MaskingStrategy(mask_prob=0.9, random_prob=0.1, unchanged_prob=0.0)
-FLOWLM_STRATEGY = MaskingStrategy(mask_prob=0.3, random_prob=0.7, unchanged_prob=0.0)
-PURE_MASK = MaskingStrategy(mask_prob=1.0, random_prob=0.0, unchanged_prob=0.0)
-PURE_RANDOM = MaskingStrategy(mask_prob=0.0, random_prob=1.0, unchanged_prob=0.0)
+class MaskEnum(Enum):
+    BERT = MaskingStrategy(mask_prob=0.8, random_prob=0.1, unchanged_prob=0.1)
+    LLADA = MaskingStrategy(mask_prob=0.9, random_prob=0.1, unchanged_prob=0.0)
+    FLOWLM = MaskingStrategy(mask_prob=0.3, random_prob=0.7, unchanged_prob=0.0)
+    PURE_MASK = MaskingStrategy(mask_prob=1.0, random_prob=0.0, unchanged_prob=0.0)
+    PURE_RANDOM = MaskingStrategy(mask_prob=0.0, random_prob=1.0, unchanged_prob=0.0)
 
 
 def format_dialogue(

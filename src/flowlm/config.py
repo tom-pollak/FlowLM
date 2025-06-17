@@ -3,10 +3,13 @@
 from dataclasses import dataclass, field
 from typing import List, Optional
 
+from .data import MaskEnum, MaskingRatio
+
 
 @dataclass
 class ModelConfig:
     """Model configuration."""
+
     model_id: str = "answerdotai/ModernBERT-large"
     torch_dtype: str = "bfloat16"
     device_map: str = "auto"
@@ -18,6 +21,7 @@ class ModelConfig:
 @dataclass
 class DatasetConfig:
     """Dataset configuration."""
+
     name: str = "allenai/tulu-3-sft-mixture-0225"
     split: str = "train"
     cache_dir: str = "./data"
@@ -29,14 +33,15 @@ class DatasetConfig:
 @dataclass
 class MaskingConfig:
     """Masking strategy configuration."""
-    strategy: str = "LLADA_STRATEGY"
-    min_ratio: float = 0.15
-    max_ratio: float = 0.99
+
+    strategy: MaskEnum = MaskEnum.LLADA
+    ratio: MaskingRatio = MaskingRatio(min_ratio=0.15, max_ratio=0.99)
 
 
 @dataclass
 class TrainingConfig:
     """Training hyperparameters."""
+
     batch_size: int = 32
     num_epochs: int = 1
     learning_rate: float = 2e-5
@@ -48,6 +53,7 @@ class TrainingConfig:
 @dataclass
 class DataLoaderConfig:
     """DataLoader configuration."""
+
     num_workers: int = 16
     pin_memory: bool = True
     persistent_workers: bool = True
@@ -57,6 +63,7 @@ class DataLoaderConfig:
 @dataclass
 class EvaluationConfig:
     """Evaluation configuration."""
+
     eval_steps: int = 200
     num_eval_batches: int = 8
 
@@ -64,11 +71,14 @@ class EvaluationConfig:
 @dataclass
 class InferenceConfig:
     """Inference testing configuration."""
-    test_prompts: List[str] = field(default_factory=lambda: [
-        "What is the capital of France?",
-        "Explain photosynthesis in simple terms.",
-        "Write a short story about a robot."
-    ])
+
+    test_prompts: List[str] = field(
+        default_factory=lambda: [
+            "What is the capital of France?",
+            "Explain photosynthesis in simple terms.",
+            "Write a short story about a robot.",
+        ]
+    )
     answer_length: int = 16
     test_both_modes: bool = True
     confidence_threshold: float = 0.7
@@ -78,6 +88,7 @@ class InferenceConfig:
 @dataclass
 class WandbConfig:
     """Weights & Biases configuration."""
+
     project: str = "flowlm"
     name: Optional[str] = None
     log_model: bool = True
@@ -86,6 +97,7 @@ class WandbConfig:
 @dataclass
 class LoggingConfig:
     """Logging configuration."""
+
     wandb: WandbConfig = field(default_factory=WandbConfig)
     log_every: int = 200
     save_dir: str = "checkpoints"
@@ -94,6 +106,7 @@ class LoggingConfig:
 @dataclass
 class FlowLMConfig:
     """Complete FlowLM training configuration."""
+
     model: ModelConfig = field(default_factory=ModelConfig)
     dataset: DatasetConfig = field(default_factory=DatasetConfig)
     masking: MaskingConfig = field(default_factory=MaskingConfig)
@@ -102,22 +115,3 @@ class FlowLMConfig:
     evaluation: EvaluationConfig = field(default_factory=EvaluationConfig)
     inference: InferenceConfig = field(default_factory=InferenceConfig)
     logging: LoggingConfig = field(default_factory=LoggingConfig)
-
-
-# Predefined configurations
-def get_llada_config() -> FlowLMConfig:
-    """Get LLaDA baseline configuration."""
-    config = FlowLMConfig()
-    config.masking.strategy = "LLADA_STRATEGY"
-    config.logging.wandb.name = "llada-baseline"
-    config.logging.save_dir = "checkpoints/llada"
-    return config
-
-
-def get_flowlm_config() -> FlowLMConfig:
-    """Get FlowLM experimental configuration."""
-    config = FlowLMConfig()
-    config.masking.strategy = "FLOWLM_STRATEGY"
-    config.logging.wandb.name = "flowlm-experiment"
-    config.logging.save_dir = "checkpoints/flowlm"
-    return config

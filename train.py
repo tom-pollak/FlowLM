@@ -15,18 +15,13 @@ from transformers import AutoTokenizer, AutoModelForMaskedLM
 from transformers.data.data_collator import DataCollatorForLanguageModeling
 from transformers.training_args import TrainingArguments
 from transformers.trainer import Trainer
-from transformers.trainer_callback import TrainerCallback, TrainerState, TrainerControl
+from transformers.trainer_callback import TrainerCallback
 
 from datasets import load_dataset, Dataset, DatasetDict
 
 from flowlm import (
-    apply_random_mask,
-    MaskingStrategy,
-    MaskingRatio,
-    BERT_STRATEGY,
-    LLADA_STRATEGY,
-    FLOWLM_STRATEGY,
     FlowLMConfig,
+    apply_random_mask,
     test_inference,
     accuracy_buckets,
 )
@@ -64,20 +59,6 @@ def load_config(config_path: str) -> FlowLMConfig:
     )
 
 
-def get_masking_strategy(strategy_name: str) -> MaskingStrategy:
-    """Get masking strategy by name."""
-    strategies = {
-        "BERT_STRATEGY": BERT_STRATEGY,
-        "LLADA_STRATEGY": LLADA_STRATEGY,
-        "FLOWLM_STRATEGY": FLOWLM_STRATEGY,
-    }
-
-    if strategy_name not in strategies:
-        raise ValueError(f"Unknown masking strategy: {strategy_name}")
-
-    return strategies[strategy_name]
-
-
 def prepare_dataset(config: FlowLMConfig, tokenizer) -> DatasetDict:
     """Load and prepare training/validation datasets."""
     print(f"Loading dataset: {config.dataset.name}")
@@ -92,18 +73,11 @@ def prepare_dataset(config: FlowLMConfig, tokenizer) -> DatasetDict:
 
     print(f"Dataset size: {len(raw_ds)}")
 
-    # Get masking configuration
-    strategy = get_masking_strategy(config.masking.strategy)
-    masking_ratio = MaskingRatio(
-        min_ratio=config.masking.min_ratio, max_ratio=config.masking.max_ratio
-    )
-
-    # Create masking function
     mask_fn = partial(
         apply_random_mask,
         tokenizer=tokenizer,
-        strategy=strategy,
-        ratio=masking_ratio,
+        strategy=config.masking.strategy.value,
+        ratio=config.masking.ratio,
         max_len=config.dataset.max_length,
     )
 
@@ -197,6 +171,8 @@ def main():
         bf16=config.model.torch_dtype == "bfloat16",
         report_to="wandb",
         run_name=config.logging.wandb.name,
+        torch_compile=config.model.compile,
+        torch_compile_mode=config.model.compile_mode,
     )
 
     # Data collator
@@ -221,19 +197,13 @@ def main():
         callbacks=[flowlm_callback],
     )
 
-    # Compile model if specified
-    if config.model.compile:
-        print("Compiling model...")
-        torch.compile(model, mode=config.model.compile_mode)
-
     # Resume from checkpoint if specified
     if args.resume:
         print(f"Resuming training from: {args.resume}")
-        trainer.train(resume_from_checkpoint=args.resume)
     else:
-        # Start training
         print("Starting training...")
-        trainer.train()
+
+    trainer.train(resume_from_checkpoint=args.resume)
 
     # Save final model
     trainer.save_model()
