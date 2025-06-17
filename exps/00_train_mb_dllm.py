@@ -196,3 +196,18 @@ result_llada = iterative_decode(
     mask_only=True,  # LLaDA mode
 )
 print(f"LLaDA result: {result_llada}")
+
+print("\nTesting FlowLM-style inference (mask_only=False):")
+result_flowlm = iterative_decode(
+    model,
+    tokenizer,
+    test_prompt,
+    answer_length=16,
+    device=device,
+    mask_only=False,  # FlowLM mode
+    confidence_threshold=0.7,
+    max_replacements=2,
+)
+print(f"FlowLM result: {result_flowlm}")
+
+# %%
