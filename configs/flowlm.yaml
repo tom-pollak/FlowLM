@@ -2,13 +2,11 @@
 # Only includes values that differ from structured config defaults
 
 masking:
-  strategy: "FLOWLM_STRATEGY"
+  strategy: "FLOWLM"
 
 logging:
   wandb:
     name: "flowlm-experiment"
-    tags: ["flowlm", "experimental", "any-position-diffusion"]
   save_dir: "checkpoints/flowlm"
   hf:
     model_name: "modernbert-large-flowlm"
-

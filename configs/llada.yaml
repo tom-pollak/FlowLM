@@ -1,11 +1,12 @@
-# LLaDA Baseline Configuration  
+# LLaDA Baseline Configuration
 # Only includes values that differ from structured config defaults
 
 masking:
-  strategy: "LLADA_STRATEGY"
+  strategy: "LLADA"
 
 logging:
   wandb:
     name: "llada-baseline"
-    tags: ["llada", "baseline", "modernbert"]
   save_dir: "checkpoints/llada"
+  hf:
+    model_name: "modernbert-large-dllm"
