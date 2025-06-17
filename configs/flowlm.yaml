@@ -9,3 +9,6 @@ logging:
     name: "flowlm-experiment"
     tags: ["flowlm", "experimental", "any-position-diffusion"]
   save_dir: "checkpoints/flowlm"
+  hf:
+    model_name: "modernbert-large-flowlm"
+

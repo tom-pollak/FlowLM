@@ -13,7 +13,7 @@ class ModelConfig:
     model_id: str = "answerdotai/ModernBERT-large"
     torch_dtype: str = "bfloat16"
     device_map: str = "auto"
-    low_cpu_mem_usage: bool = True
+    low_cpu_mem_usage: bool = False
     compile: bool = True
     compile_mode: str = "max-autotune"
 
@@ -95,10 +95,21 @@ class WandbConfig:
 
 
 @dataclass
+class HuggingFaceConfig:
+    """Hugging Face configuration."""
+
+    log_model: bool = True
+    repo_id: str = "flowlm"
+    private: bool = False
+    model_name: str = "modernbert-large-dllm"
+
+
+@dataclass
 class LoggingConfig:
     """Logging configuration."""
 
     wandb: WandbConfig = field(default_factory=WandbConfig)
+    hf: HuggingFaceConfig = field(default_factory=HuggingFaceConfig)
     log_every: int = 200
     save_dir: str = "checkpoints"
 

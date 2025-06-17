@@ -220,6 +220,13 @@ def main():
         artifact.add_dir(output_dir)
         wandb.log_artifact(artifact)
 
+    if config.logging.hf.log_model:
+        trainer.push_to_hub(
+            repo_id=config.logging.hf.repo_id,
+            private=config.logging.hf.private,
+            model_name=config.logging.hf.model_name,
+        )
+
     wandb.finish()
 
 
