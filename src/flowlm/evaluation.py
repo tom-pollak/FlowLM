@@ -120,4 +120,3 @@ def test_inference(model, tokenizer, config: FlowLMConfig) -> dict[str, str]:
             print(f"FlowLM result: {result_flowlm}")
 
     return results
-

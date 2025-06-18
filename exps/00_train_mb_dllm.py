@@ -156,7 +156,7 @@ for epoch in range(num_epochs):
 
         # Validation
         if global_step % log_every == 0:
-            val_loss, val_acc, bucket_acc = evaluate_model(model, val_loader, device)
+            val_loss, val_acc, bucket_acc = evaluate_model(model, val_loader)
             val_losses.append(val_loss)
             val_accs.append(val_acc)
 
