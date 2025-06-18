@@ -11,6 +11,7 @@ def iterative_decode(
     mask_only: bool = True,
     confidence_threshold: float = 0.5,
     max_replacements: int = 1,
+    num_steps: int | None = None,
 ) -> str:
     """
     Iteratively decode by replacing tokens based on confidence.
@@ -37,9 +38,7 @@ def iterative_decode(
     answer_start = len([tokenizer.cls_token_id] + prompt_ids + [tokenizer.sep_token_id])
     answer_end = answer_start + answer_length
 
-    num_steps = (
-        answer_length if mask_only else answer_length // 2
-    )  # FlowLM needs fewer steps
+    num_steps = num_steps or answer_length
 
     device = next(model.parameters()).device
 
