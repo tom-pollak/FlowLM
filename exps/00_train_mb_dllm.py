@@ -64,7 +64,7 @@ def mask_fn(example):
     return apply_random_mask(
         example,
         tokenizer,
-        strategy=MaskEnum.BERT.value,  # 80% mask, 10% random, 10% unchanged
+        strategy=MaskEnum.FLOWLM.value,  # 20% mask, 70% random, 10% unchanged
         ratio=MaskingRatio(min_ratio=mask_ratio_min, max_ratio=mask_ratio_max),
         max_len=max_len,
     )
@@ -229,6 +229,6 @@ print(f"FlowLM result: {result_flowlm}")
 
 # %%
 
-repo_id = "tommyp111/modernbert-diffusion"
-model.push_to_hub(repo_id, commit_message="Add diffusion-style fine-tuned weights")
+repo_id = "tommyp111/modernbert-flowlm"
+model.push_to_hub(repo_id)
 tokenizer.push_to_hub(repo_id)
