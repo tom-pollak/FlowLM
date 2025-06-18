@@ -156,15 +156,15 @@ for epoch in range(num_epochs):
 
         # Validation
         if global_step % log_every == 0:
-            val_loss, val_acc, bucket_acc = evaluate_model(model, val_loader)
-            val_losses.append(val_loss)
-            val_accs.append(val_acc)
+            val_metrics = evaluate_model(model, val_loader)
+            val_losses.append(val_metrics["val_loss"])
+            val_accs.append(val_metrics["val_acc"])
 
             print(
                 f"\nStep {global_step:6d} | "
                 f"train_loss {running_loss / step:.4f} train_acc {running_acc / step:.3f} | "
-                f"val_loss {val_loss:.4f} val_acc {val_acc:.3f} | "
-                f"bucket_acc {[f'{x:.3f}' for x in bucket_acc]}\n"
+                f"val_loss {val_metrics['val_loss']:.4f} val_acc {val_metrics['val_acc']:.3f} | "
+                f"bucket_acc {[f'{x:.3f}' for x in val_metrics['bucket_acc']]}\n"
             )
 
             model.train()
