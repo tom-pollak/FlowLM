@@ -220,7 +220,6 @@ result_flowlm = iterative_decode(
     tokenizer,
     test_prompt,
     answer_length=16,
-    device=device,
     mask_only=False,  # FlowLM mode
     confidence_threshold=0.7,
     max_replacements=2,
